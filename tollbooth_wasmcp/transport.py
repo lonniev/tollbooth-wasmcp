@@ -61,7 +61,10 @@ async def _exchange(method, scheme, authority, path_with_query, headers, body):
         await sink.send(body)
     sink.close()
 
-    # Await the response future (same unwrap logic as poll_loop.send).
+    # Await the response future (same unwrap logic as poll_loop.send). wasi:http
+    # error values are frozen dataclasses — raising them directly fails when Python
+    # tries to attach __traceback__ (FrozenInstanceError masks the real cause), so
+    # surface a clean httpx.ConnectError with the wasi ErrorCode repr instead.
     while True:
         response = future.get()
         if response is None:
@@ -70,8 +73,8 @@ async def _exchange(method, scheme, authority, path_with_query, headers, body):
             if isinstance(response, Ok):
                 if isinstance(response.value, Ok):
                     return response.value.value
-                raise response.value
-            raise response
+                raise httpx.ConnectError(f"wasi:http request error: {response.value!r}")
+            raise httpx.ConnectError(f"wasi:http response error: {response!r}")
 
 
 class WasiHttpTransport(httpx.AsyncBaseTransport):
