@@ -104,8 +104,25 @@ class SpinOperatorHost:
                 args = bind_args(fn, args)
                 loop = PollLoop()
                 asyncio.set_event_loop(loop)
+
+                async def _run_and_persist():
+                    try:
+                        return await fn(**args)
+                    finally:
+                        # Spin tears down the instance after each request, so the wheel's
+                        # background + graceful-shutdown ledger flushes never run — a debit
+                        # (or its rollback) would be lost. Flush the dirty ledger to Neon
+                        # synchronously. Only when a paid tool populated the cache, so free
+                        # tools don't pay to initialize it.
+                        cache = getattr(host.runtime, "_ledger_cache", None)
+                        if cache is not None:
+                            try:
+                                await cache.flush_all()
+                            except Exception:
+                                pass
+
                 try:
-                    result = loop.run_until_complete(fn(**args))
+                    result = loop.run_until_complete(_run_and_persist())
                 except Exception as e:
                     return _text(json.dumps({
                         "success": False, "error": f"{type(e).__name__}: {e}",
