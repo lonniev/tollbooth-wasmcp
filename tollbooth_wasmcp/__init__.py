@@ -51,6 +51,8 @@ def _install_seams():
 
     # 6) Force-import the top-level shims + crypto binding so they enter the snapshot.
     import cryptography.hazmat.primitives.ciphers.aead  # noqa: F401
+    import fastmcp  # noqa: F401 — MCP-to-MCP client shim (Oracle/Authority delegation)
+    import fastmcp.server.dependencies  # noqa: F401
     import pynostr.event  # noqa: F401
     import pynostr.key  # noqa: F401
     from wit_world.imports import ops  # noqa: F401

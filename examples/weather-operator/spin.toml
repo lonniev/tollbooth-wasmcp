@@ -19,4 +19,6 @@ allowed_outbound_hosts = [
   "https://*.neon.tech",
   "http://localhost:8799",
   "https://*.workers.dev",
+  # upstream DPYC MCPs (dpyc-oracle, Authorities) for oracle delegation + certify_credits
+  "https://*.fastmcp.app",
 ]
