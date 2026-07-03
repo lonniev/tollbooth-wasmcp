@@ -1,0 +1,17 @@
+.venv/
+venv/
+target/
+node_modules/
+.wrangler/
+deps/
+wit_world/
+componentize_py_runtime.pyi
+.spin/
+*.wasm
+!tollbooth_wasmcp/crypto.wasm
+.env
+.env.local
+*.local.json
+dist/
+__pycache__/
+*.pyc

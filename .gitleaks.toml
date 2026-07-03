@@ -1,0 +1,13 @@
+# Extend the default gitleaks ruleset; only add narrow allowlists.
+[extend]
+useDefault = true
+
+[allowlist]
+description = """
+Generated third-party WIT interface definitions (from the wasmcp scaffold)
+contain OAuth documentation examples like `access_token=<token>` in comments —
+these are not secrets.
+"""
+paths = [
+  '''.*wit/deps/.*\.wit''',
+]

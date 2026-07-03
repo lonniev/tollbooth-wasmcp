@@ -1,0 +1,26 @@
+{
+  "nip04": {
+    "priv_a": "514be89533dc67f7254f66e7094c696e794304930ba2b6bc4aecc9c1280d0b1c",
+    "pub_a_xonly": "b69b2811f7c5070fe122bcf952020b6012c00f8e25dafb08f8cebe4e4d8d4e23",
+    "priv_b": "c43b06b948d3f26832ec3250e68513719bafb304851d87ada95b21b1c8c73542",
+    "pub_b_xonly": "23fa01e37a6c7ad66115bc2b059bfad57514655d67f26cfb0fa2202fbed5fb2d",
+    "shared_x": "23e894e38fef2c3490cd1346632372d30df0cbe4aca4be7faf7fcb33ade5bbd2",
+    "plaintext": "{\"type\":\"dpyc-bootstrap-config\",\"neon\":\"postgres://x\"}",
+    "ciphertext_nip04": "6/HQntFrztn9PK96FcPoO5AqLvDYKEVngEJC1RbMswaF7f1+2bIMjiK75CUFQVw4TrJXeWIk3zMFt3qk8wU5gA==?iv=KHANLORZc6cWHOo1VePAfQ=="
+  },
+  "aesgcm_vault": {
+    "nsec_hex": "c4af959a4900ff89139326d966b28015805f83864794c7889479b41d8ba7d17d",
+    "derived_key": "f384f154a33a5fbd858e06e3ebf8bd9e03412dd6356248eb90c7d22bf627383f",
+    "plaintext": "{\"balance_api_sats\": 4200}",
+    "ciphertext_b64": "t8no73vywBWqKssd0UEB68F5OfZKRrCt1x+/2k4zA4BPm8MoRzoun7fIUSQyaR9fvDNs3coW",
+    "ciphertext_b64_aad": "jpzWnQxCtcWuZLz/3syoGIzTNlAVouw9tgwEQbIbo/b5vk1GLMR737q0BiMNCp9/bzA8V5tx",
+    "aad": "vault/ledger",
+    "salt": "tollbooth-vault-v1",
+    "info": "vault-ledger-encryption"
+  },
+  "schnorr_real_event": {
+    "id": "01d23f0f4f1a45e07f015e5d244bda6ae0f8dc1bec1ae93c858a46650195bad9",
+    "sig": "c16489b20c957cd01ba0803f25112cc0cc58e2b3936ecb0ed9ae98013f1531d16a27239cad919514eb232578292347fc2c5e0227304e03868051097ee2b4b999",
+    "pubkey": "4f2e07e3e815ef6e5c8ec9f14c52ed9cec2fdf2dcc09acc68657798168c42e35"
+  }
+}

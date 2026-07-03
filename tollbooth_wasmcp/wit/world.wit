@@ -1,0 +1,22 @@
+package wasmcp:operator@0.1.0;
+
+/// operator MCP tools capability component (execution-capable).
+///
+/// Exports the tools interface (wasmcp wraps it with tools-middleware at
+/// compose time) and imports the seams the tollbooth-dpyc wheel needs at
+/// runtime, none of which the WASI Python interpreter provides natively:
+///   - wasi:http/outgoing-handler — httpx is routed over this (registry,
+///     bridge, Neon, Open-Meteo).
+///   - dpyc:crypto/ops — the composed Rust crypto component (NIP-04 ECDH,
+///     BIP-340 schnorr verify, AES-256-CBC/GCM) standing in for coincurve
+///     + cryptography natives.
+///   - wasi:cli/environment — read the operator nsec / bridge URL delivered
+///     via `spin up --env` (os.environ is frozen in the pre-init snapshot).
+///   - wasi:config/store — the Spin variables channel (deploy-time config).
+world operator {
+    export wasmcp:mcp-v20251125/tools@0.1.1;
+    import wasi:http/outgoing-handler@0.2.8;
+    import dpyc:crypto/ops@0.1.0;
+    import wasi:cli/environment@0.2.8;
+    import wasi:config/store@0.2.0-draft-2024-09-27;
+}

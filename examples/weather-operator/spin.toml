@@ -1,0 +1,22 @@
+spin_manifest_version = 2
+
+[application]
+name = "tollbooth-weather-wasm"
+version = "0.1.0"
+description = "Reference DPYC weather Operator on Spin/WASI, hosted by tollbooth-wasmcp."
+
+[[trigger.http]]
+route = "/..."
+component = "operator"
+
+[component.operator]
+source = "server.wasm"
+key_value_stores = ["default"]
+allowed_outbound_hosts = [
+  "https://raw.githubusercontent.com",
+  "https://api.open-meteo.com",
+  "https://archive-api.open-meteo.com",
+  "https://*.neon.tech",
+  "http://localhost:8799",
+  "https://*.workers.dev",
+]

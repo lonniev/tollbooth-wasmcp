@@ -1,0 +1,28 @@
+[package]
+name = "dpyc-crypto"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+# WIT bindings runtime (only used on the wasm target).
+wit-bindgen-rt = { version = "0.44.0", features = ["bitflags"] }
+# Pure-Rust crypto (compile natively AND for wasm32-wasip2).
+k256 = { version = "0.13", default-features = false, features = ["ecdh", "schnorr", "arithmetic", "alloc"] }
+aes = "0.8"
+cbc = { version = "0.1", features = ["alloc"] }
+cipher = { version = "0.4", features = ["block-padding", "alloc"] }
+aes-gcm = { version = "0.10", default-features = false, features = ["aes", "alloc"] }
+
+[dev-dependencies]
+serde_json = "1"
+hex = "0.4"
+base64 = "0.22"
+
+[lib]
+# rlib so `cargo test` builds a native test harness; cdylib for the component.
+crate-type = ["cdylib", "rlib"]
+
+[package.metadata.component]
+package = "dpyc:crypto"
+
+[package.metadata.component.dependencies]

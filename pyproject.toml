@@ -1,0 +1,39 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "tollbooth-wasmcp"
+version = "0.1.0"
+description = "Spin/WASI host adapter for tollbooth-dpyc Operators — deploy a DPYC operator to Fermyon Spin / Akamai Functions with just business logic."
+readme = "README.md"
+requires-python = ">=3.12"
+license = "Apache-2.0"
+authors = [{ name = "lonniev" }]
+keywords = ["mcp", "wasm", "wasi", "spin", "wasmcp", "tollbooth", "dpyc"]
+dependencies = [
+    # The transport + bootstrap ride httpx (routed over wasi:http at build time).
+    "httpx>=0.28",
+]
+
+[project.urls]
+Homepage = "https://github.com/lonniev/tollbooth-wasmcp"
+
+# The tollbooth-dpyc wheel is a peer the operator installs itself (with --no-deps,
+# to keep the wheel's native crypto libs out of the Wasm bundle — the composed
+# dpyc:crypto component supplies them). It is intentionally NOT a hard dependency.
+
+[tool.hatch.build.targets.wheel]
+packages = ["tollbooth_wasmcp"]
+# crypto.wasm is a built artifact (gitignored); force-include it in the wheel.
+artifacts = ["tollbooth_wasmcp/crypto.wasm"]
+
+[tool.ruff]
+line-length = 120
+
+[tool.ruff.lint.per-file-ignores]
+# Vendored componentize-py async support + top-level shims — imported for their
+# side effects / bundled name surface; not linted as first-party code.
+"tollbooth_wasmcp/poll_loop.py" = ["F401", "E402", "E501", "E741", "E722"]
+"tollbooth_wasmcp/transport.py" = ["E501"]
+"tollbooth_wasmcp/_toplevel/**" = ["F401", "E402", "E501"]

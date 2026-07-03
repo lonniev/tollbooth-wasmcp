@@ -1,0 +1,1094 @@
+[
+  {
+    "name": "weather_check_balance",
+    "description": "Check a patron's credit balance at this operator.\n\nThis is the patron's spending",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "npub": {
+          "type": "string",
+          "description": "The Nostr public key (npub1...) whose balance to check."
+        },
+        "dpop_token": {
+          "type": "string",
+          "description": "A kind-27235 Nostr event signed by npub for this tool."
+        }
+      },
+      "required": [
+        "npub",
+        "dpop_token"
+      ],
+      "type": "object"
+    }
+  },
+  {
+    "name": "weather_purchase_credits",
+    "description": "Buy credits via Bitcoin Lightning.\n\nCreates a Lightning invoice. Pay it with any",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "npub": {
+          "type": "string",
+          "description": "The Nostr public key (npub1...) the credits will fund."
+        },
+        "dpop_token": {
+          "type": "string",
+          "description": "A kind-27235 Nostr event signed by npub for this tool."
+        },
+        "amount_sats": {
+          "default": 1000,
+          "type": "integer",
+          "description": "Satoshis to purchase (default 1000)."
+        }
+      },
+      "required": [
+        "npub",
+        "dpop_token"
+      ],
+      "type": "object"
+    }
+  },
+  {
+    "name": "weather_check_payment",
+    "description": "Check the payment status of a Lightning invoice.\n\nCall after paying the invoice ",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "invoice_id": {
+          "type": "string",
+          "description": "The invoice ID returned by purchase_credits."
+        },
+        "npub": {
+          "type": "string",
+          "description": "The Nostr public key (npub1...) that purchased the invoice."
+        },
+        "dpop_token": {
+          "type": "string",
+          "description": "A kind-27235 Nostr event signed by npub for this tool."
+        }
+      },
+      "required": [
+        "invoice_id",
+        "npub",
+        "dpop_token"
+      ],
+      "type": "object"
+    }
+  },
+  {
+    "name": "weather_restore_credits",
+    "description": "Credit a patron's ledger from a BTCPay-settled invoice.\n\n**RESTRICTED to the ope",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "invoice_id": {
+          "type": "string",
+          "description": "The BTCPay invoice ID to verify and credit."
+        },
+        "patron_npub": {
+          "type": "string",
+          "description": "The patron's npub whose ledger receives the grant."
+        },
+        "dpop_token": {
+          "type": "string",
+          "description": "A kind-27235 Nostr event signed by the OPERATOR's nsec\nfor this tool. Patron proofs are rejected."
+        }
+      },
+      "required": [
+        "invoice_id",
+        "patron_npub",
+        "dpop_token"
+      ],
+      "type": "object"
+    }
+  },
+  {
+    "name": "weather_account_statement",
+    "description": "Generate a patron's account statement at this operator.\n\nReturns the patron's pu",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "npub": {
+          "type": "string",
+          "description": "The patron's Nostr public key (npub1...)."
+        },
+        "dpop_token": {
+          "type": "string",
+          "description": "A kind-27235 Nostr event signed by npub for this tool."
+        },
+        "days": {
+          "default": 30,
+          "type": "integer",
+          "description": "Number of days of daily usage history to include (default 30)."
+        }
+      },
+      "required": [
+        "npub",
+        "dpop_token"
+      ],
+      "type": "object"
+    }
+  },
+  {
+    "name": "weather_account_statement_infographic",
+    "description": "Generate a visual SVG infographic of your account statement.\n\nReturns the same d",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "npub": {
+          "type": "string",
+          "description": "The Nostr public key (npub1...) whose statement to render."
+        },
+        "dpop_token": {
+          "type": "string",
+          "description": "A kind-27235 Nostr event signed by npub for this tool."
+        },
+        "days": {
+          "default": 30,
+          "type": "integer",
+          "description": "Number of days of daily usage history to include (default 30)."
+        }
+      },
+      "required": [
+        "npub",
+        "dpop_token"
+      ],
+      "type": "object"
+    }
+  },
+  {
+    "name": "weather_service_status",
+    "description": "Check the health and configuration of this service. Free.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {},
+      "type": "object"
+    }
+  },
+  {
+    "name": "weather_get_operator_onboarding_status",
+    "description": "Report this operator's configuration readiness.\n\nShows which operator settings a",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {},
+      "type": "object"
+    }
+  },
+  {
+    "name": "weather_get_patron_onboarding_status",
+    "description": "Report a patron's credential readiness for this operator.\n\nFor set-once services",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "patron_npub": {
+          "type": "string",
+          "description": "The patron's Nostr public key (npub1...)."
+        },
+        "dpop_token": {
+          "type": "string",
+          "description": "A kind-27235 Nostr event signed by patron_npub for this tool."
+        }
+      },
+      "required": [
+        "patron_npub",
+        "dpop_token"
+      ],
+      "type": "object"
+    }
+  },
+  {
+    "name": "weather_session_status",
+    "description": "Check operator readiness. Returns the operator lifecycle\nstate and clear guidanc",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "patron_npub": {
+          "default": "",
+          "type": "string",
+          "description": "Optional. If supplied, the response includes an\n``upstream_oauth`` block with the patron's stored OAuth\ntoken expiry (runtime-derived from vault state) so a\nclient can refresh proactively rather than reactively\nafter a stale-token failure."
+        }
+      },
+      "type": "object"
+    }
+  },
+  {
+    "name": "weather_request_credential_channel",
+    "description": "Open a Secure Courier channel for credential delivery.\n\nThis is the CREDENTIAL-D",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "sender_npub": {
+          "default": "",
+          "type": "string",
+          "description": "Required. The npub to send the template to."
+        },
+        "service": {
+          "default": "",
+          "type": "string",
+          "description": "Required. The credential service name (e.g.,\nfrom get_operator_onboarding_status or get_patron_onboarding_status)."
+        }
+      },
+      "type": "object"
+    }
+  },
+  {
+    "name": "weather_receive_credentials",
+    "description": "Pick up credentials from the Secure Courier.\n\nCompletes the CREDENTIAL-DELIVERY ",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "sender_npub": {
+          "default": "",
+          "type": "string",
+          "description": "Required. The npub that sent the credentials."
+        },
+        "service": {
+          "default": "",
+          "type": "string",
+          "description": "Required. The credential service name (must match\nthe service used in request_credential_channel)."
+        },
+        "dpop_token": {
+          "default": "",
+          "type": "string",
+          "description": "Required. The session phrase returned by\nrequest_credential_channel for this exact channel."
+        },
+        "credential_card": {
+          "default": "",
+          "type": "string",
+          "description": "Optional. An ncred1... card to redeem directly\n(bypasses the relay drain; dpop_token not needed)."
+        }
+      },
+      "type": "object"
+    }
+  },
+  {
+    "name": "weather_forget_credentials",
+    "description": "Delete vaulted credentials for a specific service and npub.\n\nFor operator creden",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "service": {
+          "type": "string",
+          "description": "The credential service to forget."
+        },
+        "npub": {
+          "type": "string",
+          "description": "The Nostr public key (npub1...) whose credentials to forget."
+        },
+        "dpop_token": {
+          "type": "string",
+          "description": "A kind-27235 Nostr event signed by npub for this tool."
+        }
+      },
+      "required": [
+        "service",
+        "npub",
+        "dpop_token"
+      ],
+      "type": "object"
+    }
+  },
+  {
+    "name": "weather_update_patron_credential",
+    "description": "Add or update a single patron credential field.\n\nMerges into existing stored cre",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "npub": {
+          "type": "string",
+          "description": "The patron's Nostr public key (npub1...)."
+        },
+        "dpop_token": {
+          "type": "string",
+          "description": "A kind-27235 Nostr event signed by npub for this tool."
+        },
+        "field": {
+          "type": "string",
+          "description": "The credential field name to set."
+        },
+        "value": {
+          "type": "string",
+          "description": "The value to store."
+        }
+      },
+      "required": [
+        "npub",
+        "dpop_token",
+        "field",
+        "value"
+      ],
+      "type": "object"
+    }
+  },
+  {
+    "name": "weather_delete_patron_credential",
+    "description": "Remove a single patron credential field.\n\nDeletes one field from stored credenti",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "npub": {
+          "type": "string",
+          "description": "The patron's Nostr public key (npub1...)."
+        },
+        "dpop_token": {
+          "type": "string",
+          "description": "A kind-27235 Nostr event signed by npub for this tool."
+        },
+        "field": {
+          "type": "string",
+          "description": "The credential field name to remove."
+        }
+      },
+      "required": [
+        "npub",
+        "dpop_token",
+        "field"
+      ],
+      "type": "object"
+    }
+  },
+  {
+    "name": "weather_get_patron_credential_fields",
+    "description": "List stored patron credential field names (not values).\n\nReturns the names of fi",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "npub": {
+          "type": "string",
+          "description": "The patron's Nostr public key (npub1...)."
+        },
+        "dpop_token": {
+          "type": "string",
+          "description": "A kind-27235 Nostr event signed by npub for this tool."
+        }
+      },
+      "required": [
+        "npub",
+        "dpop_token"
+      ],
+      "type": "object"
+    }
+  },
+  {
+    "name": "weather_request_npub_proof",
+    "description": "Request npub ownership proof from a patron via Nostr DM.\n\nThis is the npub-OWNER",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "patron_npub": {
+          "default": "",
+          "type": "string",
+          "description": "Required. The patron's npub to request proof from."
+        }
+      },
+      "type": "object"
+    }
+  },
+  {
+    "name": "weather_receive_npub_proof",
+    "description": "Receive npub ownership confirmation from a patron.\n\nCompletes the npub-OWNERSHIP",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "patron_npub": {
+          "default": "",
+          "type": "string",
+          "description": "Required. The patron's npub to receive proof from."
+        },
+        "dpop_token": {
+          "default": "",
+          "type": "string",
+          "description": "Required. The dpop_token returned by request_npub_proof."
+        }
+      },
+      "type": "object"
+    }
+  },
+  {
+    "name": "weather_check_proof_status",
+    "description": "Check whether a previously-cached dpop_token is still valid.\n\nMirrors ``check_oa",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "patron_npub": {
+          "default": "",
+          "type": "string",
+          "description": "Required. The patron's npub (npub1...)."
+        },
+        "dpop_token": {
+          "default": "",
+          "type": "string",
+          "description": "Required. The dpop_token phrase returned by\n``request_npub_proof`` / ``receive_npub_proof``."
+        }
+      },
+      "type": "object"
+    }
+  },
+  {
+    "name": "weather_oracle_how_to_join",
+    "description": "Get DPYC onboarding instructions from the Oracle. Free.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {},
+      "type": "object"
+    }
+  },
+  {
+    "name": "weather_oracle_get_tax_rate",
+    "description": "Get the current DPYC certification tax rate. Free.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {},
+      "type": "object"
+    }
+  },
+  {
+    "name": "weather_oracle_lookup_member",
+    "description": "Look up a DPYC community member by npub. Free.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "npub": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "npub"
+      ],
+      "type": "object"
+    }
+  },
+  {
+    "name": "weather_oracle_about",
+    "description": "Describe the DPYC ecosystem via the Oracle. Free.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {},
+      "type": "object"
+    }
+  },
+  {
+    "name": "weather_oracle_network_advisory",
+    "description": "Get active network advisories from the Oracle. Free.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {},
+      "type": "object"
+    }
+  },
+  {
+    "name": "weather_check_authority_balance",
+    "description": "Check this operator's tax balance at the Authority.\n\nReturns the sats available ",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {},
+      "type": "object"
+    }
+  },
+  {
+    "name": "weather_get_pricing_model",
+    "description": "Get the active pricing model for this operator. Free.\n\nIf no model exists, self-",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {},
+      "type": "object"
+    }
+  },
+  {
+    "name": "weather_set_pricing_model",
+    "description": "Set the active pricing model. RESTRICTED to operator.\n\nRequires a valid proof (S",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "model_json": {
+          "type": "string"
+        },
+        "dpop_token": {
+          "default": "",
+          "type": "string"
+        }
+      },
+      "required": [
+        "model_json"
+      ],
+      "type": "object"
+    }
+  },
+  {
+    "name": "weather_reset_pricing_model",
+    "description": "Erase all pricing models and restore a viable default.\n\nDeletes every stored mod",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "dpop_token": {
+          "default": "",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    }
+  },
+  {
+    "name": "weather_request_adoption",
+    "description": "Ask a chosen Authority to adopt this operator (deferred courtship).\n\nRESTRICTED ",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "authority_npub": {
+          "type": "string",
+          "description": "npub of the Authority to request adoption from."
+        },
+        "dpop_token": {
+          "default": "",
+          "type": "string",
+          "description": "operator-npub ownership proof (inline kind-27235 or cached token)."
+        },
+        "service_url": {
+          "default": "",
+          "type": "string",
+          "description": "this operator's MCP endpoint (advertised to the Authority)."
+        },
+        "note": {
+          "default": "",
+          "type": "string",
+          "description": "optional message for the Authority owner."
+        }
+      },
+      "required": [
+        "authority_npub"
+      ],
+      "type": "object"
+    }
+  },
+  {
+    "name": "weather_adoption_status",
+    "description": "Check this operator's adoption-request status at a chosen Authority.\n\nFree. Poll",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "authority_npub": {
+          "type": "string"
+        },
+        "dpop_token": {
+          "default": "",
+          "type": "string"
+        }
+      },
+      "required": [
+        "authority_npub"
+      ],
+      "type": "object"
+    }
+  },
+  {
+    "name": "weather_restore_neon_schema",
+    "description": "Re-run ``ensure_schema()`` on every NeonVault this operator uses.\n\nDiagnostic / ",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "dpop_token": {
+          "default": "",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    }
+  },
+  {
+    "name": "weather_list_canonical_identities",
+    "description": "Return canonical (tool_id, mcp_name, \u2026) for every registered tool.\n\nThe authorit",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {},
+      "type": "object"
+    }
+  },
+  {
+    "name": "weather_get_nostr_profile",
+    "description": "Read an npub's public Nostr profile (NIP-01 kind-0 metadata).\n\nFree, no proof \u2014 ",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "npub": {
+          "default": "",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    }
+  },
+  {
+    "name": "weather_publish_nostr_profile",
+    "description": "Publish a CLIENT-SIGNED kind-0 profile to relays for an npub.\n\nThe wheel never h",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "npub": {
+          "default": "",
+          "type": "string",
+          "description": "The patron's Nostr public key the event must be signed by."
+        },
+        "signed_event": {
+          "default": "",
+          "type": "string",
+          "description": "A JSON-encoded, client-signed kind-0 event."
+        }
+      },
+      "type": "object"
+    }
+  },
+  {
+    "name": "weather_check_price",
+    "description": "Preview the effective cost of a tool call.\n\nShows the base cost and any constrai",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "tool_id": {
+          "type": "string",
+          "description": "Either the tool's UUID (from the pricing model) or a\nbare capability string (e.g. ``\"deal_scenario\"``). FE\ncallers usually have the capability name; this resolves\nboth so the FE doesn't need to derive UUIDs locally."
+        },
+        "npub": {
+          "default": "",
+          "type": "string"
+        },
+        "dpop_token": {
+          "default": "",
+          "type": "string"
+        },
+        "tool_kwargs": {
+          "default": "",
+          "type": "string",
+          "description": "Optional JSON object with tool call parameters\nfor ad valorem / categorical-multiplier pricing preview\n(e.g. '{\"amount_sats\": 5000}' or\n'{\"difficulty\": \"sovereign\", \"mode\": \"live\"}')."
+        }
+      },
+      "required": [
+        "tool_id"
+      ],
+      "type": "object"
+    }
+  },
+  {
+    "name": "weather_list_constraint_types",
+    "description": "List all available constraint types and their parameter schemas.\n\nReturns the ty",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {},
+      "type": "object"
+    }
+  },
+  {
+    "name": "weather_mint_coupon",
+    "description": "Create a new operator-owned discount coupon.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "The catchy code patrons type to redeem\n(operator-scoped uniqueness)."
+        },
+        "discount_percent": {
+          "type": "number",
+          "description": "Percentage off the base price (0-100)."
+        },
+        "valid_from": {
+          "type": "string",
+          "description": "ISO-8601 datetime when the coupon becomes active."
+        },
+        "valid_until": {
+          "type": "string",
+          "description": "ISO-8601 datetime when the coupon expires."
+        },
+        "uses_per_patron": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 1,
+          "description": "How many tool calls one patron can claim the\ndiscount on (default 1; pass null/None for unlimited\nwithin the window)."
+        },
+        "total_uses": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Aggregate cap across all patrons (default None =\nunlimited)."
+        },
+        "dpop_token": {
+          "default": "",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "discount_percent",
+        "valid_from",
+        "valid_until"
+      ],
+      "type": "object"
+    }
+  },
+  {
+    "name": "weather_list_coupons",
+    "description": "List every coupon this operator has minted (newest first).\n\nEach row carries the",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "dpop_token": {
+          "default": "",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    }
+  },
+  {
+    "name": "weather_update_coupon",
+    "description": "Patch a coupon's editable fields.\n\nPass only the fields you want to change.  To ",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "coupon_id": {
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "discount_percent": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "valid_from": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "valid_until": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "uses_per_patron": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "total_uses": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "clear_uses_per_patron": {
+          "default": false,
+          "type": "boolean"
+        },
+        "clear_total_uses": {
+          "default": false,
+          "type": "boolean"
+        },
+        "dpop_token": {
+          "default": "",
+          "type": "string"
+        }
+      },
+      "required": [
+        "coupon_id"
+      ],
+      "type": "object"
+    }
+  },
+  {
+    "name": "weather_delete_coupon",
+    "description": "Delete a coupon.  Cascades to all patron redemptions.\n\nAny chain step referencin",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "coupon_id": {
+          "type": "string"
+        },
+        "dpop_token": {
+          "default": "",
+          "type": "string"
+        }
+      },
+      "required": [
+        "coupon_id"
+      ],
+      "type": "object"
+    }
+  },
+  {
+    "name": "weather_redeem_coupon",
+    "description": "Claim a coupon by its name (the code the operator shared).\n\nLooks up the operato",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "npub": {
+          "type": "string"
+        },
+        "code": {
+          "type": "string"
+        },
+        "dpop_token": {
+          "default": "",
+          "type": "string"
+        }
+      },
+      "required": [
+        "npub",
+        "code"
+      ],
+      "type": "object"
+    }
+  },
+  {
+    "name": "weather_list_my_coupons",
+    "description": "List the coupons this patron has redeemed on this operator.\n\nReturns both active",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "npub": {
+          "type": "string"
+        },
+        "dpop_token": {
+          "default": "",
+          "type": "string"
+        }
+      },
+      "required": [
+        "npub"
+      ],
+      "type": "object"
+    }
+  },
+  {
+    "name": "weather_forget_coupon",
+    "description": "Remove a coupon from this patron's redemption list.\n\nCosmetic only \u2014 the coupon ",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "npub": {
+          "type": "string"
+        },
+        "coupon_id": {
+          "type": "string"
+        },
+        "dpop_token": {
+          "default": "",
+          "type": "string"
+        }
+      },
+      "required": [
+        "npub",
+        "coupon_id"
+      ],
+      "type": "object"
+    }
+  },
+  {
+    "name": "weather_notarize_ledger",
+    "description": "Build a Merkle tree of all patron balances and submit the root\nto Bitcoin via Op",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {},
+      "type": "object"
+    }
+  },
+  {
+    "name": "weather_get_notarization_proof",
+    "description": "Generate a Merkle inclusion proof that a patron's balance was\nincluded in a Bitc",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "notarization_id": {
+          "type": "string",
+          "description": "The notarization record ID."
+        },
+        "npub": {
+          "type": "string",
+          "description": "The patron's Nostr public key (npub1...)."
+        }
+      },
+      "required": [
+        "notarization_id",
+        "npub"
+      ],
+      "type": "object"
+    }
+  },
+  {
+    "name": "weather_list_notarizations",
+    "description": "List recent Bitcoin notarization records.",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "default": 20,
+          "type": "integer",
+          "description": "Maximum records to return (default 20)."
+        },
+        "status": {
+          "default": "",
+          "type": "string",
+          "description": "Optional filter (e.g., 'submitted', 'confirmed')."
+        }
+      },
+      "type": "object"
+    }
+  },
+  {
+    "name": "weather_current",
+    "description": "Get current weather conditions for a location.\n\nReturns temperature, wind speed,",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "latitude": {
+          "type": "number",
+          "description": "Latitude (-90 to 90)."
+        },
+        "longitude": {
+          "type": "number",
+          "description": "Longitude (-180 to 180)."
+        },
+        "npub": {
+          "default": "",
+          "description": "Required. Your Nostr public key (npub1...) for credit billing.",
+          "type": "string"
+        },
+        "dpop_token": {
+          "default": "",
+          "type": "string"
+        }
+      },
+      "required": [
+        "latitude",
+        "longitude"
+      ],
+      "type": "object"
+    }
+  },
+  {
+    "name": "weather_forecast",
+    "description": "Get a multi-day weather forecast for a location.\n\nReturns daily high/low tempera",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "latitude": {
+          "type": "number",
+          "description": "Latitude (-90 to 90)."
+        },
+        "longitude": {
+          "type": "number",
+          "description": "Longitude (-180 to 180)."
+        },
+        "days": {
+          "default": 7,
+          "type": "integer",
+          "description": "Number of forecast days (1-16, default 7)."
+        },
+        "npub": {
+          "default": "",
+          "description": "Required. Your Nostr public key (npub1...) for credit billing.",
+          "type": "string"
+        },
+        "dpop_token": {
+          "default": "",
+          "type": "string"
+        }
+      },
+      "required": [
+        "latitude",
+        "longitude"
+      ],
+      "type": "object"
+    }
+  },
+  {
+    "name": "weather_historical",
+    "description": "Get historical weather data for a location and date range.\n\nReturns daily temper",
+    "inputSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "latitude": {
+          "type": "number",
+          "description": "Latitude (-90 to 90)."
+        },
+        "longitude": {
+          "type": "number",
+          "description": "Longitude (-180 to 180)."
+        },
+        "start_date": {
+          "type": "string",
+          "description": "Start date (YYYY-MM-DD)."
+        },
+        "end_date": {
+          "type": "string",
+          "description": "End date (YYYY-MM-DD)."
+        },
+        "npub": {
+          "default": "",
+          "description": "Required. Your Nostr public key (npub1...) for credit billing.",
+          "type": "string"
+        },
+        "dpop_token": {
+          "default": "",
+          "type": "string"
+        }
+      },
+      "required": [
+        "latitude",
+        "longitude",
+        "start_date",
+        "end_date"
+      ],
+      "type": "object"
+    }
+  }
+]

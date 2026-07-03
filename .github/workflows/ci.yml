@@ -1,0 +1,92 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  python-adapter:
+    name: Python adapter
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Lint
+        run: pipx run ruff check tollbooth_wasmcp tests
+      - name: Byte-compile
+        run: python -m compileall -q tollbooth_wasmcp
+      - name: Install test deps
+        run: pip install "tollbooth-dpyc==0.59.1" "httpx==0.28.1" pytest
+      - name: Tests (schema types, coercion, FastMCP parity)
+        run: pytest tests -v
+
+  rust-crypto:
+    name: Rust crypto component
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: crypto
+    steps:
+      - uses: actions/checkout@v4
+      - name: Toolchain
+        run: |
+          rustup toolchain install stable --profile minimal --component rustfmt,clippy
+          rustup target add wasm32-wasip1
+          rustup default stable
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: crypto
+      - name: Format
+        run: cargo fmt --check
+      - name: Clippy
+        run: cargo clippy --all-targets -- -D warnings
+      - name: Test (crypto vectors vs the tollbooth-dpyc wheel)
+        run: cargo test
+      - uses: taiki-e/install-action@v2
+        with:
+          tool: cargo-component
+      - name: Build component
+        run: cargo component build --release
+      - name: Committed crypto.wasm matches source
+        run: |
+          cmp target/wasm32-wasip1/release/dpyc_crypto.wasm ../tollbooth_wasmcp/crypto.wasm \
+            || { echo "::error::tollbooth_wasmcp/crypto.wasm is stale — rebuild and recommit"; exit 1; }
+
+  bridge-worker:
+    name: Bridge Worker
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: bridge
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Install
+        run: npm install
+      - name: Validate (dry-run build, no deploy)
+        run: npx wrangler deploy --dry-run --outdir /tmp/bridge-build
+
+  secret-scan:
+    name: Secret scan
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: gitleaks
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

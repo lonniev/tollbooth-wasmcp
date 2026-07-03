@@ -1,0 +1,12 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "tollbooth-fermyon-bridge",
+  "main": "src/index.js",
+  "compatibility_date": "2026-06-01",
+  "observability": { "enabled": true },
+  "vars": {
+    // Optional CSV override of the default relay set. Leave unset to use the
+    // wheel's default relays (primal, nos.lol, damus, nostr.band).
+    // "RELAYS": "wss://relay.primal.net,wss://nos.lol"
+  }
+}

@@ -1,0 +1,28 @@
+package dpyc:crypto@0.1.0;
+
+/// Native-crypto primitives the WASI CPython component cannot provide itself
+/// (secp256k1, AES). Kept low-level: the Python stubs (coincurve, cryptography)
+/// adapt the wheel's calls onto these; key derivation (HKDF) stays pure-Python.
+interface ops {
+    /// NIP-04 ECDH shared secret: X-coordinate of privkey * (0x02||pubkey-xonly).
+    /// Returns the raw 32-byte X (NIP-04 uses it directly as the AES-256 key).
+    ecdh-nip04: func(privkey: list<u8>, pubkey-xonly: list<u8>) -> result<list<u8>, string>;
+
+    /// x-only (32-byte) public key from a 32-byte secret key.
+    xonly-pubkey: func(privkey: list<u8>) -> result<list<u8>, string>;
+
+    /// BIP-340 schnorr verify (Nostr): msg is the 32-byte event id.
+    schnorr-verify: func(msg: list<u8>, sig: list<u8>, pubkey-xonly: list<u8>) -> bool;
+
+    /// AES-256-CBC with PKCS7 (NIP-04 payload).
+    aes256-cbc-decrypt: func(key: list<u8>, iv: list<u8>, ciphertext: list<u8>) -> result<list<u8>, string>;
+    aes256-cbc-encrypt: func(key: list<u8>, iv: list<u8>, plaintext: list<u8>) -> result<list<u8>, string>;
+
+    /// AES-256-GCM (vault rows). ciphertext is raw ct||tag; nonce 12 bytes; aad may be empty.
+    aes256-gcm-decrypt: func(key: list<u8>, nonce: list<u8>, aad: list<u8>, ciphertext: list<u8>) -> result<list<u8>, string>;
+    aes256-gcm-encrypt: func(key: list<u8>, nonce: list<u8>, aad: list<u8>, plaintext: list<u8>) -> result<list<u8>, string>;
+}
+
+world crypto {
+    export ops;
+}

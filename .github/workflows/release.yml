@@ -1,0 +1,42 @@
+name: Publish to PyPI
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    environment: pypi
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      # Rebuild the dpyc:crypto component so the wheel ships a fresh crypto.wasm.
+      - name: Rust toolchain
+        run: |
+          rustup toolchain install stable --profile minimal
+          rustup target add wasm32-wasip1
+          rustup default stable
+      - uses: taiki-e/install-action@v2
+        with:
+          tool: cargo-component
+      - name: Build crypto component
+        run: cargo component build --release
+        working-directory: crypto
+      - name: Stage crypto.wasm into the package
+        run: cp crypto/target/wasm32-wasip1/release/dpyc_crypto.wasm tollbooth_wasmcp/crypto.wasm
+
+      - name: Build sdist and wheel
+        run: pip install build && python -m build
+
+      - name: Publish to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
