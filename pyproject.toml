@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "tollbooth-wasmcp"
-version = "0.1.0"
+dynamic = ["version"]
 description = "Spin/WASI host adapter for tollbooth-dpyc Operators — deploy a DPYC operator to Fermyon Spin / Akamai Functions with just business logic."
 readme = "README.md"
 requires-python = ">=3.12"
@@ -22,6 +22,9 @@ Homepage = "https://github.com/lonniev/tollbooth-wasmcp"
 # The tollbooth-dpyc wheel is a peer the operator installs itself (with --no-deps,
 # to keep the wheel's native crypto libs out of the Wasm bundle — the composed
 # dpyc:crypto component supplies them). It is intentionally NOT a hard dependency.
+
+[tool.hatch.version]
+path = "tollbooth_wasmcp/_version.py"
 
 [tool.hatch.build.targets.wheel]
 packages = ["tollbooth_wasmcp"]

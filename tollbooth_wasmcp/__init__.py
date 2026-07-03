@@ -65,6 +65,7 @@ except Exception:
 if _IN_WASM:
     _install_seams()
 
+from tollbooth_wasmcp._version import __version__  # noqa: E402
 from tollbooth_wasmcp.host import SpinOperatorHost  # noqa: E402
 
-__all__ = ["SpinOperatorHost"]
+__all__ = ["SpinOperatorHost", "__version__"]

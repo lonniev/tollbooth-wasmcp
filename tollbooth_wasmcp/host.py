@@ -17,6 +17,7 @@ is that stand-in, recording registrations so the tool list is a consequence of
 the code, not a static blob.
 """
 
+from tollbooth_wasmcp._version import __version__
 from tollbooth_wasmcp.binding import bind_args
 from tollbooth_wasmcp.env import sync_os_environ
 from tollbooth_wasmcp.schema import tool_schema
@@ -109,6 +110,10 @@ class SpinOperatorHost:
                     return _text(json.dumps({
                         "success": False, "error": f"{type(e).__name__}: {e}",
                         "trace": traceback.format_exc()[-500:]}), True)
+                # Surface the host (Spin adapter) version alongside the wheel version
+                # the wheel already reports, so a client can show the full build stack.
+                if isinstance(result, dict) and request.name.endswith("_service_status"):
+                    result.setdefault("tollbooth_wasmcp_version", __version__)
                 out = result if isinstance(result, str) else json.dumps(result)
                 is_err = isinstance(result, dict) and result.get("success") is False
                 return _text(out, is_err)
