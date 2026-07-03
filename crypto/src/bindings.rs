@@ -183,6 +183,156 @@ pub mod exports {
                 }
                 #[doc(hidden)]
                 #[allow(non_snake_case)]
+                pub unsafe fn _export_schnorr_sign_cabi<T: Guest>(
+                    arg0: *mut u8,
+                    arg1: usize,
+                    arg2: *mut u8,
+                    arg3: usize,
+                ) -> *mut u8 {
+                    #[cfg(target_arch = "wasm32")] _rt::run_ctors_once();
+                    let len0 = arg1;
+                    let len1 = arg3;
+                    let result2 = T::schnorr_sign(
+                        _rt::Vec::from_raw_parts(arg0.cast(), len0, len0),
+                        _rt::Vec::from_raw_parts(arg2.cast(), len1, len1),
+                    );
+                    let ptr3 = (&raw mut _RET_AREA.0).cast::<u8>();
+                    match result2 {
+                        Ok(e) => {
+                            *ptr3.add(0).cast::<u8>() = (0i32) as u8;
+                            let vec4 = (e).into_boxed_slice();
+                            let ptr4 = vec4.as_ptr().cast::<u8>();
+                            let len4 = vec4.len();
+                            ::core::mem::forget(vec4);
+                            *ptr3
+                                .add(2 * ::core::mem::size_of::<*const u8>())
+                                .cast::<usize>() = len4;
+                            *ptr3
+                                .add(::core::mem::size_of::<*const u8>())
+                                .cast::<*mut u8>() = ptr4.cast_mut();
+                        }
+                        Err(e) => {
+                            *ptr3.add(0).cast::<u8>() = (1i32) as u8;
+                            let vec5 = (e.into_bytes()).into_boxed_slice();
+                            let ptr5 = vec5.as_ptr().cast::<u8>();
+                            let len5 = vec5.len();
+                            ::core::mem::forget(vec5);
+                            *ptr3
+                                .add(2 * ::core::mem::size_of::<*const u8>())
+                                .cast::<usize>() = len5;
+                            *ptr3
+                                .add(::core::mem::size_of::<*const u8>())
+                                .cast::<*mut u8>() = ptr5.cast_mut();
+                        }
+                    };
+                    ptr3
+                }
+                #[doc(hidden)]
+                #[allow(non_snake_case)]
+                pub unsafe fn __post_return_schnorr_sign<T: Guest>(arg0: *mut u8) {
+                    let l0 = i32::from(*arg0.add(0).cast::<u8>());
+                    match l0 {
+                        0 => {
+                            let l1 = *arg0
+                                .add(::core::mem::size_of::<*const u8>())
+                                .cast::<*mut u8>();
+                            let l2 = *arg0
+                                .add(2 * ::core::mem::size_of::<*const u8>())
+                                .cast::<usize>();
+                            let base3 = l1;
+                            let len3 = l2;
+                            _rt::cabi_dealloc(base3, len3 * 1, 1);
+                        }
+                        _ => {
+                            let l4 = *arg0
+                                .add(::core::mem::size_of::<*const u8>())
+                                .cast::<*mut u8>();
+                            let l5 = *arg0
+                                .add(2 * ::core::mem::size_of::<*const u8>())
+                                .cast::<usize>();
+                            _rt::cabi_dealloc(l4, l5, 1);
+                        }
+                    }
+                }
+                #[doc(hidden)]
+                #[allow(non_snake_case)]
+                pub unsafe fn _export_chacha20_cabi<T: Guest>(
+                    arg0: *mut u8,
+                    arg1: usize,
+                    arg2: *mut u8,
+                    arg3: usize,
+                    arg4: *mut u8,
+                    arg5: usize,
+                ) -> *mut u8 {
+                    #[cfg(target_arch = "wasm32")] _rt::run_ctors_once();
+                    let len0 = arg1;
+                    let len1 = arg3;
+                    let len2 = arg5;
+                    let result3 = T::chacha20(
+                        _rt::Vec::from_raw_parts(arg0.cast(), len0, len0),
+                        _rt::Vec::from_raw_parts(arg2.cast(), len1, len1),
+                        _rt::Vec::from_raw_parts(arg4.cast(), len2, len2),
+                    );
+                    let ptr4 = (&raw mut _RET_AREA.0).cast::<u8>();
+                    match result3 {
+                        Ok(e) => {
+                            *ptr4.add(0).cast::<u8>() = (0i32) as u8;
+                            let vec5 = (e).into_boxed_slice();
+                            let ptr5 = vec5.as_ptr().cast::<u8>();
+                            let len5 = vec5.len();
+                            ::core::mem::forget(vec5);
+                            *ptr4
+                                .add(2 * ::core::mem::size_of::<*const u8>())
+                                .cast::<usize>() = len5;
+                            *ptr4
+                                .add(::core::mem::size_of::<*const u8>())
+                                .cast::<*mut u8>() = ptr5.cast_mut();
+                        }
+                        Err(e) => {
+                            *ptr4.add(0).cast::<u8>() = (1i32) as u8;
+                            let vec6 = (e.into_bytes()).into_boxed_slice();
+                            let ptr6 = vec6.as_ptr().cast::<u8>();
+                            let len6 = vec6.len();
+                            ::core::mem::forget(vec6);
+                            *ptr4
+                                .add(2 * ::core::mem::size_of::<*const u8>())
+                                .cast::<usize>() = len6;
+                            *ptr4
+                                .add(::core::mem::size_of::<*const u8>())
+                                .cast::<*mut u8>() = ptr6.cast_mut();
+                        }
+                    };
+                    ptr4
+                }
+                #[doc(hidden)]
+                #[allow(non_snake_case)]
+                pub unsafe fn __post_return_chacha20<T: Guest>(arg0: *mut u8) {
+                    let l0 = i32::from(*arg0.add(0).cast::<u8>());
+                    match l0 {
+                        0 => {
+                            let l1 = *arg0
+                                .add(::core::mem::size_of::<*const u8>())
+                                .cast::<*mut u8>();
+                            let l2 = *arg0
+                                .add(2 * ::core::mem::size_of::<*const u8>())
+                                .cast::<usize>();
+                            let base3 = l1;
+                            let len3 = l2;
+                            _rt::cabi_dealloc(base3, len3 * 1, 1);
+                        }
+                        _ => {
+                            let l4 = *arg0
+                                .add(::core::mem::size_of::<*const u8>())
+                                .cast::<*mut u8>();
+                            let l5 = *arg0
+                                .add(2 * ::core::mem::size_of::<*const u8>())
+                                .cast::<usize>();
+                            _rt::cabi_dealloc(l4, l5, 1);
+                        }
+                    }
+                }
+                #[doc(hidden)]
+                #[allow(non_snake_case)]
                 pub unsafe fn _export_aes256_cbc_decrypt_cabi<T: Guest>(
                     arg0: *mut u8,
                     arg1: usize,
@@ -514,6 +664,17 @@ pub mod exports {
                         sig: _rt::Vec<u8>,
                         pubkey_xonly: _rt::Vec<u8>,
                     ) -> bool;
+                    /// BIP-340 schnorr sign (Nostr): msg is the 32-byte event id, signed raw.
+                    fn schnorr_sign(
+                        msg: _rt::Vec<u8>,
+                        privkey: _rt::Vec<u8>,
+                    ) -> Result<_rt::Vec<u8>, _rt::String>;
+                    /// Raw ChaCha20 (RFC 8439) keystream XOR for NIP-44v2. nonce is 12 bytes, counter starts at 0.
+                    fn chacha20(
+                        key: _rt::Vec<u8>,
+                        nonce: _rt::Vec<u8>,
+                        data: _rt::Vec<u8>,
+                    ) -> Result<_rt::Vec<u8>, _rt::String>;
                     /// AES-256-CBC with PKCS7 (NIP-04 payload).
                     fn aes256_cbc_decrypt(
                         key: _rt::Vec<u8>,
@@ -564,6 +725,24 @@ pub mod exports {
                         u8, arg3 : usize, arg4 : * mut u8, arg5 : usize,) -> i32 { unsafe
                         { $($path_to_types)*:: _export_schnorr_verify_cabi::<$ty > (arg0,
                         arg1, arg2, arg3, arg4, arg5) } } #[unsafe (export_name =
+                        "dpyc:crypto/ops@0.1.0#schnorr-sign")] unsafe extern "C" fn
+                        export_schnorr_sign(arg0 : * mut u8, arg1 : usize, arg2 : * mut
+                        u8, arg3 : usize,) -> * mut u8 { unsafe { $($path_to_types)*::
+                        _export_schnorr_sign_cabi::<$ty > (arg0, arg1, arg2, arg3) } }
+                        #[unsafe (export_name =
+                        "cabi_post_dpyc:crypto/ops@0.1.0#schnorr-sign")] unsafe extern
+                        "C" fn _post_return_schnorr_sign(arg0 : * mut u8,) { unsafe {
+                        $($path_to_types)*:: __post_return_schnorr_sign::<$ty > (arg0) }
+                        } #[unsafe (export_name = "dpyc:crypto/ops@0.1.0#chacha20")]
+                        unsafe extern "C" fn export_chacha20(arg0 : * mut u8, arg1 :
+                        usize, arg2 : * mut u8, arg3 : usize, arg4 : * mut u8, arg5 :
+                        usize,) -> * mut u8 { unsafe { $($path_to_types)*::
+                        _export_chacha20_cabi::<$ty > (arg0, arg1, arg2, arg3, arg4,
+                        arg5) } } #[unsafe (export_name =
+                        "cabi_post_dpyc:crypto/ops@0.1.0#chacha20")] unsafe extern "C" fn
+                        _post_return_chacha20(arg0 : * mut u8,) { unsafe {
+                        $($path_to_types)*:: __post_return_chacha20::<$ty > (arg0) } }
+                        #[unsafe (export_name =
                         "dpyc:crypto/ops@0.1.0#aes256-cbc-decrypt")] unsafe extern "C" fn
                         export_aes256_cbc_decrypt(arg0 : * mut u8, arg1 : usize, arg2 : *
                         mut u8, arg3 : usize, arg4 : * mut u8, arg5 : usize,) -> * mut u8
@@ -675,22 +854,25 @@ macro_rules! __export_crypto_impl {
 #[doc(inline)]
 pub(crate) use __export_crypto_impl as export;
 #[cfg(target_arch = "wasm32")]
-#[unsafe(link_section = "component-type:wit-bindgen:0.41.0:dpyc:crypto@0.1.0:crypto:encoded world")]
+#[unsafe(
+    link_section = "component-type:wit-bindgen:0.41.0:dpyc:crypto@0.1.0:crypto:encoded world"
+)]
 #[doc(hidden)]
 #[allow(clippy::octal_escapes)]
-pub static __WIT_BINDGEN_COMPONENT_TYPE: [u8; 530] = *b"\
-\0asm\x0d\0\x01\0\0\x19\x16wit-component-encoding\x04\0\x07\x95\x03\x01A\x02\x01\
-A\x02\x01B\x10\x01p}\x01j\x01\0\x01s\x01@\x02\x07privkey\0\x0cpubkey-xonly\0\0\x01\
+pub static __WIT_BINDGEN_COMPONENT_TYPE: [u8; 602] = *b"\
+\0asm\x0d\0\x01\0\0\x19\x16wit-component-encoding\x04\0\x07\xdd\x03\x01A\x02\x01\
+A\x02\x01B\x14\x01p}\x01j\x01\0\x01s\x01@\x02\x07privkey\0\x0cpubkey-xonly\0\0\x01\
 \x04\0\x0aecdh-nip04\x01\x02\x01@\x01\x07privkey\0\0\x01\x04\0\x0cxonly-pubkey\x01\
 \x03\x01@\x03\x03msg\0\x03sig\0\x0cpubkey-xonly\0\0\x7f\x04\0\x0eschnorr-verify\x01\
-\x04\x01@\x03\x03key\0\x02iv\0\x0aciphertext\0\0\x01\x04\0\x12aes256-cbc-decrypt\
-\x01\x05\x01@\x03\x03key\0\x02iv\0\x09plaintext\0\0\x01\x04\0\x12aes256-cbc-encr\
-ypt\x01\x06\x01@\x04\x03key\0\x05nonce\0\x03aad\0\x0aciphertext\0\0\x01\x04\0\x12\
-aes256-gcm-decrypt\x01\x07\x01@\x04\x03key\0\x05nonce\0\x03aad\0\x09plaintext\0\0\
-\x01\x04\0\x12aes256-gcm-encrypt\x01\x08\x04\0\x15dpyc:crypto/ops@0.1.0\x05\0\x04\
-\0\x18dpyc:crypto/crypto@0.1.0\x04\0\x0b\x0c\x01\0\x06crypto\x03\0\0\0G\x09produ\
-cers\x01\x0cprocessed-by\x02\x0dwit-component\x070.227.1\x10wit-bindgen-rust\x06\
-0.41.0";
+\x04\x01@\x02\x03msg\0\x07privkey\0\0\x01\x04\0\x0cschnorr-sign\x01\x05\x01@\x03\
+\x03key\0\x05nonce\0\x04data\0\0\x01\x04\0\x08chacha20\x01\x06\x01@\x03\x03key\0\
+\x02iv\0\x0aciphertext\0\0\x01\x04\0\x12aes256-cbc-decrypt\x01\x07\x01@\x03\x03k\
+ey\0\x02iv\0\x09plaintext\0\0\x01\x04\0\x12aes256-cbc-encrypt\x01\x08\x01@\x04\x03\
+key\0\x05nonce\0\x03aad\0\x0aciphertext\0\0\x01\x04\0\x12aes256-gcm-decrypt\x01\x09\
+\x01@\x04\x03key\0\x05nonce\0\x03aad\0\x09plaintext\0\0\x01\x04\0\x12aes256-gcm-\
+encrypt\x01\x0a\x04\0\x15dpyc:crypto/ops@0.1.0\x05\0\x04\0\x18dpyc:crypto/crypto\
+@0.1.0\x04\0\x0b\x0c\x01\0\x06crypto\x03\0\0\0G\x09producers\x01\x0cprocessed-by\
+\x02\x0dwit-component\x070.227.1\x10wit-bindgen-rust\x060.41.0";
 #[inline(never)]
 #[doc(hidden)]
 pub fn __link_custom_section_describing_imports() {

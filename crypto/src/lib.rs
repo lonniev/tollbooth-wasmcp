@@ -30,6 +30,12 @@ mod component {
         fn schnorr_verify(msg: Vec<u8>, sig: Vec<u8>, pubkey_xonly: Vec<u8>) -> bool {
             cc::schnorr_verify(&msg, &sig, &pubkey_xonly)
         }
+        fn schnorr_sign(msg: Vec<u8>, privkey: Vec<u8>) -> Result<Vec<u8>, String> {
+            cc::schnorr_sign(&msg, &privkey)
+        }
+        fn chacha20(key: Vec<u8>, nonce: Vec<u8>, data: Vec<u8>) -> Result<Vec<u8>, String> {
+            cc::chacha20(&key, &nonce, &data)
+        }
         fn aes256_cbc_decrypt(
             key: Vec<u8>,
             iv: Vec<u8>,
@@ -174,6 +180,20 @@ mod tests {
         let ct = cc::aes256_gcm_encrypt(&key, &nonce, b"aad-ctx", msg).unwrap();
         let pt = cc::aes256_gcm_decrypt(&key, &nonce, b"aad-ctx", &ct).unwrap();
         assert_eq!(pt, msg);
+    }
+
+    #[test]
+    fn schnorr_sign_then_verify_roundtrip() {
+        // Sign a 32-byte "event id" with a known secret, verify with its xonly pubkey.
+        let sk = [7u8; 32];
+        let msg = [0x11u8; 32];
+        let pk = cc::xonly_pubkey(&sk).unwrap();
+        let sig = cc::schnorr_sign(&msg, &sk).unwrap();
+        assert_eq!(sig.len(), 64);
+        assert!(cc::schnorr_verify(&msg, &sig, &pk));
+        // A different message must not verify against this signature.
+        let other = [0x22u8; 32];
+        assert!(!cc::schnorr_verify(&other, &sig, &pk));
     }
 
     #[test]

@@ -1,6 +1,7 @@
-"""Minimal pynostr Event shim: id recomputation + BIP-340 verify via the
-composed dpyc:crypto component. Enough for the wheel's inline kind-27235 proof
-verification (identity_proof.verify_proof). Signing is not supported."""
+"""Minimal pynostr Event shim: id recomputation + BIP-340 sign/verify via the
+composed dpyc:crypto component. Covers the wheel's inline kind-27235 proof
+verification (identity_proof.verify_proof) and the Secure Courier's DM signing
+(gift wraps, seals, NIP-04 DMs) — all through the dpyc:crypto ops interface."""
 
 import hashlib
 import json
@@ -31,6 +32,25 @@ class Event:
             separators=(",", ":"), ensure_ascii=False,
         )
         return hashlib.sha256(ser.encode("utf-8")).hexdigest()
+
+    def to_dict(self):
+        return {
+            "id": self.id, "pubkey": self.pubkey, "created_at": self.created_at,
+            "kind": self.kind, "tags": self.tags, "content": self.content, "sig": self.sig,
+        }
+
+    def to_message(self):
+        return json.dumps(["EVENT", self.to_dict()])
+
+    def sign(self, privkey_hex):
+        """Set pubkey from the key, compute the id, and BIP-340-sign it (raw)
+        via the crypto component — the counterpart to verify()."""
+        from wit_world.imports import ops  # dpyc:crypto
+
+        self.pubkey = bytes(ops.xonly_pubkey(bytes.fromhex(privkey_hex))).hex()
+        self.id = self.compute_id()
+        self.sig = bytes(ops.schnorr_sign(bytes.fromhex(self.id), bytes.fromhex(privkey_hex))).hex()
+        return self.sig
 
     def verify(self):
         if not (self.id and self.sig and self.pubkey):

@@ -12,6 +12,8 @@ aes = "0.8"
 cbc = { version = "0.1", features = ["alloc"] }
 cipher = { version = "0.4", features = ["block-padding", "alloc"] }
 aes-gcm = { version = "0.10", default-features = false, features = ["aes", "alloc"] }
+# Raw ChaCha20 stream cipher (RFC 8439) for NIP-44v2 DM encryption.
+chacha20 = "0.9"
 
 [dev-dependencies]
 serde_json = "1"

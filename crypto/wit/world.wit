@@ -14,6 +14,12 @@ interface ops {
     /// BIP-340 schnorr verify (Nostr): msg is the 32-byte event id.
     schnorr-verify: func(msg: list<u8>, sig: list<u8>, pubkey-xonly: list<u8>) -> bool;
 
+    /// BIP-340 schnorr sign (Nostr): msg is the 32-byte event id, signed raw.
+    schnorr-sign: func(msg: list<u8>, privkey: list<u8>) -> result<list<u8>, string>;
+
+    /// Raw ChaCha20 (RFC 8439) keystream XOR for NIP-44v2. nonce is 12 bytes, counter starts at 0.
+    chacha20: func(key: list<u8>, nonce: list<u8>, data: list<u8>) -> result<list<u8>, string>;
+
     /// AES-256-CBC with PKCS7 (NIP-04 payload).
     aes256-cbc-decrypt: func(key: list<u8>, iv: list<u8>, ciphertext: list<u8>) -> result<list<u8>, string>;
     aes256-cbc-encrypt: func(key: list<u8>, iv: list<u8>, plaintext: list<u8>) -> result<list<u8>, string>;

@@ -49,12 +49,19 @@ def _install_seams():
 
     install_proof_diagnostic()
 
+    # 5b) Reroute the Secure Courier's relay I/O through the bridge (websocket-client
+    # + threads don't exist under WASI) and run asyncio.to_thread in-loop.
+    from tollbooth_wasmcp import courier_relay
+
+    courier_relay.install()
+
     # 6) Force-import the top-level shims + crypto binding so they enter the snapshot.
     import cryptography.hazmat.primitives.ciphers.aead  # noqa: F401
     import fastmcp  # noqa: F401 — MCP-to-MCP client shim (Oracle/Authority delegation)
     import fastmcp.server.dependencies  # noqa: F401
     import pynostr.event  # noqa: F401
     import pynostr.key  # noqa: F401
+    import websocket  # noqa: F401 — stub so _HAS_WEBSOCKET=True; relay I/O goes via the bridge
     from wit_world.imports import ops  # noqa: F401
 
 

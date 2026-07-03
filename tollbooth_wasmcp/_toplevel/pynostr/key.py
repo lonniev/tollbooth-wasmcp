@@ -74,7 +74,12 @@ class PublicKey:
 
 
 class PrivateKey:
-    def __init__(self, raw):
+    def __init__(self, raw=None):
+        # PrivateKey() with no arg generates a random ephemeral key (the courier
+        # uses these for NIP-17 gift wraps + self-DM agents). WASI random via os.urandom.
+        if raw is None:
+            import os
+            raw = os.urandom(32)
         self._hex = raw.hex() if isinstance(raw, (bytes, bytearray)) else raw
 
     @classmethod

@@ -8,11 +8,13 @@ use aes::Aes256;
 use aes_gcm::aead::{Aead, KeyInit, Payload};
 use aes_gcm::{Aes256Gcm, Key, Nonce};
 use cbc::{Decryptor as CbcDec, Encryptor as CbcEnc};
+use chacha20::cipher::{KeyIvInit as _, StreamCipher as _};
+use chacha20::ChaCha20;
 use cipher::block_padding::Pkcs7;
 use cipher::{BlockDecryptMut, BlockEncryptMut, KeyIvInit};
 use k256::ecdh::diffie_hellman;
 use k256::elliptic_curve::sec1::ToEncodedPoint;
-use k256::schnorr::{Signature, VerifyingKey};
+use k256::schnorr::{Signature, SigningKey, VerifyingKey};
 use k256::{PublicKey, SecretKey};
 
 type R = Result<Vec<u8>, String>;
@@ -64,6 +66,27 @@ pub fn schnorr_verify(msg: &[u8], sig: &[u8], pubkey_xonly: &[u8]) -> bool {
     // SHA-256 the message first (BIP-340 message-hashing form); `verify_raw`
     // uses the message as-is, which is what Nostr requires.
     vk.verify_raw(msg, &sig).is_ok()
+}
+
+/// BIP-340 schnorr sign (Nostr): `msg` is the 32-byte event id, signed raw (no
+/// pre-hashing), matching `schnorr_verify`'s `verify_raw`. Deterministic aux_rand
+/// (zeros) — valid per BIP-340; each Nostr event id is unique, so the per-message
+/// nonce is unique without an RNG (which the Wasm crypto component lacks).
+pub fn schnorr_sign(msg: &[u8], privkey: &[u8]) -> R {
+    let sk = SigningKey::from_bytes(privkey).map_err(e)?;
+    let sig = sk.sign_raw(msg, &[0u8; 32]).map_err(e)?;
+    Ok(sig.to_bytes().to_vec())
+}
+
+/// Raw ChaCha20 (RFC 8439) keystream XOR for NIP-44v2. `nonce` is the 12-byte
+/// IETF nonce with the block counter starting at 0 — matching what NIP-44 feeds
+/// `cryptography`'s ChaCha20 as `[0u8;4] || nonce`. Encrypt and decrypt are the
+/// same operation (stream XOR).
+pub fn chacha20(key: &[u8], nonce: &[u8], data: &[u8]) -> R {
+    let mut cipher = ChaCha20::new_from_slices(key, nonce).map_err(e)?;
+    let mut buf = data.to_vec();
+    cipher.apply_keystream(&mut buf);
+    Ok(buf)
 }
 
 pub fn aes256_cbc_decrypt(key: &[u8], iv: &[u8], ct: &[u8]) -> R {
