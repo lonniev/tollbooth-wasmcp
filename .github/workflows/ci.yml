@@ -57,11 +57,10 @@ jobs:
         with:
           tool: cargo-component
       - name: Build component
+        # Verifies the dpyc:crypto source compiles. The shipped crypto.wasm is
+        # rebuilt fresh into the wheel by release.yml (Rust→wasm isn't byte-
+        # reproducible across environments, so we don't cmp against the committed one).
         run: cargo component build --release
-      - name: Committed crypto.wasm matches source
-        run: |
-          cmp target/wasm32-wasip1/release/dpyc_crypto.wasm ../tollbooth_wasmcp/crypto.wasm \
-            || { echo "::error::tollbooth_wasmcp/crypto.wasm is stale — rebuild and recommit"; exit 1; }
 
   bridge-worker:
     name: Bridge Worker
