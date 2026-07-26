@@ -87,7 +87,7 @@ tollbooth_wasmcp/       the adapter (PyPI package): SpinOperatorHost, schema, bi
 crypto/                 Rust source for the dpyc:crypto component
 bridge/                 the HTTPS→Nostr-relay bridge Cloudflare Worker
 examples/weather-operator/   a complete reference operator using SpinOperatorHost
-tests/                  schema/coercion unit tests (incl. FastMCP parity)
+tests/                  schema unit tests (incl. FastMCP parity)
 ```
 
 Apache-2.0. Part of the [DPYC](https://github.com/lonniev/dpyc-community) ecosystem.
