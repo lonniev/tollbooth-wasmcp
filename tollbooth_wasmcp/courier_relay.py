@@ -39,8 +39,13 @@ def _bridge_post(path, body_obj):
     from wit_world.imports import outgoing_handler, poll
     from wit_world.imports.streams import StreamError_Closed
     from wit_world.imports.wasi_http_types import (
-        Fields, IncomingBody, Method_Post, OutgoingBody, OutgoingRequest,
-        Scheme_Http, Scheme_Https,
+        Fields,
+        IncomingBody,
+        Method_Post,
+        OutgoingBody,
+        OutgoingRequest,
+        Scheme_Http,
+        Scheme_Https,
     )
 
     body_bytes = json.dumps(body_obj).encode("utf-8")
@@ -135,7 +140,7 @@ def _publish_to_relays(self, message):
     event = json.loads(message)[1]
     try:
         res = _publish(event, list(self._relays))
-    except Exception as e:  # noqa: BLE001 — surface as per-relay failure, never raise
+    except Exception as e:
         return [(r, False, str(e)) for r in self._relays]
     return [(row[0], bool(row[1]), str(row[2])) for row in res.get("results", [])]
 
@@ -144,7 +149,7 @@ def _publish_to_one_relay(self, message, relay_url):
     event = json.loads(message)[1]
     try:
         res = _publish(event, [relay_url])
-    except Exception as e:  # noqa: BLE001
+    except Exception as e:
         return False, str(e)
     for row in res.get("results", []):
         if row[0] == relay_url:
@@ -159,7 +164,7 @@ def _subscribe_one_relay(self, relay_url, sub_id, filters):
         filters = [filters]
     try:
         res = _query(filters, [relay_url])
-    except Exception:  # noqa: BLE001 — a dead relay must not break the drain
+    except Exception:
         return
     events = res.get("events", [])
     with self._lock:
@@ -169,7 +174,7 @@ def _subscribe_one_relay(self, relay_url, sub_id, filters):
 def _query_one_relay_has_event(self, relay_url, sub_id, filt):
     try:
         res = _query([filt], [relay_url], limit=1)
-    except Exception:  # noqa: BLE001
+    except Exception:
         return False
     return len(res.get("events", [])) > 0
 

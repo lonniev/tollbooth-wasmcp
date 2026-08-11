@@ -16,9 +16,9 @@ def _b64(s: str) -> bytes:
 
 
 async def wasm_ensure_bootstrapped(relays=None):
+    from pynostr.key import PrivateKey, PublicKey
     from tollbooth.bootstrap import BootstrapResult
     from wit_world.imports import ops
-    from pynostr.key import PrivateKey, PublicKey
 
     nsec = os.environ.get("TOLLBOOTH_NOSTR_OPERATOR_NSEC", "")
     if not nsec:

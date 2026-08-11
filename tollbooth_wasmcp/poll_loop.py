@@ -9,18 +9,19 @@ mechanism to model concurrency.
 import asyncio
 import socket
 import subprocess
+from typing import Optional, cast
 
-from componentize_py_types import Ok, Err
-from wit_world.imports import wasi_http_types as types, streams, poll, outgoing_handler
+from componentize_py_types import Err, Ok
+from wit_world.imports import outgoing_handler, poll, streams
+from wit_world.imports import wasi_http_types as types
+from wit_world.imports.poll import Pollable
+from wit_world.imports.streams import InputStream, StreamError_Closed
 from wit_world.imports.wasi_http_types import (
     IncomingBody,
+    IncomingResponse,
     OutgoingBody,
     OutgoingRequest,
-    IncomingResponse,
 )
-from wit_world.imports.streams import StreamError_Closed, InputStream
-from wit_world.imports.poll import Pollable
-from typing import Optional, cast
 
 # Maximum number of bytes to read at a time
 READ_SIZE: int = 16 * 1024
@@ -49,10 +50,10 @@ class Stream:
     """Reader abstraction over `wasi:http/types#incoming-body`."""
 
     def __init__(self, body: IncomingBody):
-        self.body: Optional[IncomingBody] = body
-        self.stream: Optional[InputStream] = body.stream()
+        self.body: IncomingBody | None = body
+        self.stream: InputStream | None = body.stream()
 
-    async def next(self) -> Optional[bytes]:
+    async def next(self) -> bytes | None:
         """Wait for the next chunk of data to arrive on the stream.
 
         This will return `None` when the end of the stream has been reached.
@@ -79,7 +80,7 @@ class Stream:
                         IncomingBody.finish(self.body)
                         self.body = None
                 else:
-                    raise e
+                    raise
 
 
 class Sink:
@@ -154,8 +155,8 @@ class PollLoop(asyncio.AbstractEventLoop):
                 for index in poll.poll(pollables):
                     ready[index] = True
 
-                for (ready, pollable), waker in zip(zip(ready, pollables), wakers):
-                    if ready:
+                for (is_ready, pollable), waker in zip(zip(ready, pollables), wakers):
+                    if is_ready:
                         pollable.__exit__(None, None, None)
                         waker.set_result(None)
                     else:

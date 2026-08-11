@@ -7,6 +7,23 @@ tollbooth-wasmcp is the Spin/WASI host adapter for tollbooth-dpyc operators — 
 peer of FastMCP on the Prefect Horizon side. `SpinOperatorHost` runs the same
 operator source in a WebAssembly component.
 
+## [0.1.6] — 2026-08-10
+
+### Changed — CI runs the check the deploy runs
+
+The `python-adapter` job inspects the deploy entrypoint, the check a FastMCP host performs
+at build time. The step self-skips here, since this package is a host adapter rather than a
+deployed server, but it carries the fleet invariant so the rule needs no exception.
+
+Two things this surfaced, both left as follow-ups rather than changed blind:
+
+- CI installs `tollbooth-dpyc==0.59.1` hardcoded in the workflow. That is twenty-six
+  versions behind the fleet and invisible to Renovate, which reads manifests, not workflow
+  steps. The adapter is therefore tested against an SDK no operator runs.
+- `release.yml` here publishes to PyPI and never creates a GitHub Release, which is why five
+  tags produced no release notes. Getting notes would mean adding that step, not fixing an
+  extraction pattern as elsewhere in this sweep.
+
 ## [0.1.5] — 2026-07-03
 
 ### Fixed

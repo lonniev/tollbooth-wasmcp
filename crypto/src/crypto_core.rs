@@ -8,7 +8,7 @@ use aes::Aes256;
 use aes_gcm::aead::{Aead, KeyInit, Payload};
 use aes_gcm::{Aes256Gcm, Key, Nonce};
 use cbc::{Decryptor as CbcDec, Encryptor as CbcEnc};
-use chacha20::cipher::{KeyIvInit as _, StreamCipher as _};
+use chacha20::cipher::StreamCipher as _;
 use chacha20::ChaCha20;
 use cipher::block_padding::Pkcs7;
 use cipher::{BlockDecryptMut, BlockEncryptMut, KeyIvInit};
