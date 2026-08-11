@@ -59,7 +59,14 @@ jobs:
         with:
           workspaces: crypto
       - name: Format
-        run: cargo fmt --check
+        # `cargo fmt --check` formats the whole crate, which includes
+        # src/bindings.rs — wit-bindgen output that says "DO NOT EDIT" in its
+        # first line. Stable rustfmt wants to collapse one attribute in there, so
+        # the job failed over a file we must not own: reformatting it would be
+        # reverted by the next `wit-bindgen` run and the red would come straight
+        # back. Check the first-party sources instead; skip_children stops rustfmt
+        # following `mod bindings;` out of lib.rs.
+        run: rustfmt --check --edition 2021 --config skip_children=true src/lib.rs src/crypto_core.rs
       - name: Clippy
         run: cargo clippy --all-targets -- -D warnings
       - name: Test (crypto vectors vs the tollbooth-dpyc wheel)

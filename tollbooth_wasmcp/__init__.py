@@ -57,9 +57,9 @@ def _install_seams():
 
     # 6) Force-import the top-level shims + crypto binding so they enter the snapshot.
     import cryptography.hazmat.primitives.ciphers.aead  # noqa: F401
-    import fastmcp  # noqa: F401 — MCP-to-MCP client shim (Oracle/Authority delegation)
+    import fastmcp
     import fastmcp.server.dependencies  # noqa: F401
-    import pynostr.event  # noqa: F401
+    import pynostr.event
     import pynostr.key  # noqa: F401
     import websocket  # noqa: F401 — stub so _HAS_WEBSOCKET=True; relay I/O goes via the bridge
     from wit_world.imports import ops  # noqa: F401
@@ -74,7 +74,7 @@ except Exception:
 if _IN_WASM:
     _install_seams()
 
-from tollbooth_wasmcp._version import __version__  # noqa: E402
-from tollbooth_wasmcp.host import SpinOperatorHost  # noqa: E402
+from tollbooth_wasmcp._version import __version__
+from tollbooth_wasmcp.host import SpinOperatorHost
 
 __all__ = ["SpinOperatorHost", "__version__"]

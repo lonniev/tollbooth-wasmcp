@@ -6,17 +6,27 @@ with TLS terminated by the wasi:http host. No `ssl` module is touched.
 """
 
 import asyncio
-import httpx
 
-from tollbooth_wasmcp.poll_loop import Stream, Sink, register
+import httpx
 from componentize_py_types import Ok
 from wit_world.imports import outgoing_handler
 from wit_world.imports.wasi_http_types import (
-    Method_Get, Method_Post, Method_Put, Method_Delete, Method_Patch,
-    Method_Head, Method_Options, Method_Other,
-    Scheme_Http, Scheme_Https, Scheme_Other,
-    OutgoingRequest, Fields,
+    Fields,
+    Method_Delete,
+    Method_Get,
+    Method_Head,
+    Method_Options,
+    Method_Other,
+    Method_Patch,
+    Method_Post,
+    Method_Put,
+    OutgoingRequest,
+    Scheme_Http,
+    Scheme_Https,
+    Scheme_Other,
 )
+
+from tollbooth_wasmcp.poll_loop import Sink, Stream, register
 
 # Headers the wasi:http host manages itself; setting them on a Fields raises
 # HeaderError_Forbidden. host is conveyed via set_authority; content-length via

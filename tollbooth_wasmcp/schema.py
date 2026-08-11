@@ -10,8 +10,10 @@ from __future__ import annotations
 
 import inspect
 import re
+import types
 import typing
-from typing import Any, Callable
+from collections.abc import Callable
+from typing import Any
 
 _JSON_PRIMITIVES = {
     str: "string",
@@ -34,7 +36,13 @@ def _json_type(ann: Any) -> str:
         return "array"
     if origin is dict:
         return "object"
-    if origin is typing.Union:
+    # BOTH spellings of a union. `typing.Optional[int]` / `typing.Union[int, None]`
+    # give origin `typing.Union`, but PEP 604 `int | None` gives `types.UnionType` —
+    # a different object, so testing only the former let every modern annotation
+    # fall through to the "string" default below. That is silent and wrong in a
+    # schema the agent trusts: `int | None` published as a string means callers
+    # send `"5"` where the tool wants `5`.
+    if origin is typing.Union or origin is getattr(types, "UnionType", None):
         for arg in typing.get_args(ann):
             if arg is not type(None):
                 return _json_type(arg)

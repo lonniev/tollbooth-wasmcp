@@ -8,11 +8,11 @@ docstrings) — no FastMCP or pydantic involved here.
 import json
 import os
 import sys
-from typing import Annotated
+from typing import Annotated, Optional
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from tollbooth_wasmcp.schema import tool_schema  # noqa: E402
+from tollbooth_wasmcp.schema import tool_schema
 
 
 def test_types_required_defaults_descriptions():
@@ -35,15 +35,39 @@ def test_types_required_defaults_descriptions():
 
 
 def test_annotated_description_and_optional():
-    from typing import Optional
 
-    async def f(x: Annotated[str, "an x value"] = "", y: Optional[int] = None):
+    async def f(x: Annotated[str, "an x value"] = "", y: int | None = None):
         """Doc."""
 
     s = tool_schema(f)
     assert s["properties"]["x"]["description"] == "an x value"
     assert s["properties"]["y"]["type"] == "integer"
     assert "required" not in s  # both have defaults
+
+
+def test_both_spellings_of_an_optional_unwrap_to_the_inner_type():
+    """`Optional[int]` and `int | None` must produce the SAME schema.
+
+    They are different objects to `typing.get_origin` — `typing.Union` vs
+    `types.UnionType` — and checking only the first let every PEP 604 annotation
+    fall through to the "string" default. Silent and wrong in a schema an agent
+    trusts: a tool wanting `5` would be sent `"5"`. Caught only because a lint
+    auto-fix modernised the fixture above, taking the old spelling's coverage
+    with it — so both are pinned here.
+    """
+    async def modern(a: int | None = None, b: str | None = None, c: float | None = None):
+        """Doc."""
+
+    async def classic(
+        a: Optional[int] = None,    # noqa: UP045 — the legacy spelling IS the subject
+        b: Optional[str] = None,    # noqa: UP045
+        c: Optional[float] = None,  # noqa: UP045
+    ):
+        """Doc."""
+
+    assert tool_schema(modern)["properties"] == tool_schema(classic)["properties"]
+    assert tool_schema(modern)["properties"]["a"]["type"] == "integer"
+    assert tool_schema(modern)["properties"]["c"]["type"] == "number"
 
 
 def test_multiline_arg_description():
@@ -61,8 +85,8 @@ def test_multiline_arg_description():
 def test_parity_with_fastmcp_on_wheel_standard_tools():
     """The generator's descriptions match FastMCP's for the wheel's standard
     tools, because both parse the same docstrings."""
-    from tollbooth.tool_identity import STANDARD_IDENTITIES
     from tollbooth.runtime import OperatorRuntime, register_standard_tools
+    from tollbooth.tool_identity import STANDARD_IDENTITIES
 
     class _Shim:
         def __init__(self):
@@ -79,7 +103,8 @@ def test_parity_with_fastmcp_on_wheel_standard_tools():
     register_standard_tools(mcp, "weather", rt, service_name="t", service_version="0")
 
     fixture_path = os.path.join(os.path.dirname(__file__), "sample_tools_catalog.json")
-    live = {t["name"]: t["inputSchema"] for t in json.load(open(fixture_path))}
+    with open(fixture_path) as fh:
+        live = {t["name"]: t["inputSchema"] for t in json.load(fh)}
 
     # Content parity, modulo whitespace: FastMCP preserves the docstring's hard
     # line-wraps inside a description; this generator reflows them to single
@@ -100,8 +125,8 @@ def test_wheel_future_annotations_resolve_to_json_types():
     it (via get_type_hints) to the correct JSON type — not fall through to the
     "string" default. Otherwise a client sends a string and the wheel's
     `timedelta(days=...)` raises TypeError."""
-    from tollbooth.tool_identity import STANDARD_IDENTITIES
     from tollbooth.runtime import OperatorRuntime, register_standard_tools
+    from tollbooth.tool_identity import STANDARD_IDENTITIES
 
     class _Shim:
         def __init__(self):
