@@ -110,14 +110,15 @@ class SpinOperatorHost:
                         return await fn(**args)
                     finally:
                         # Spin tears down the instance after each request, so the wheel's
-                        # background + graceful-shutdown ledger flushes never run — a debit
-                        # (or its rollback) would be lost. Flush the dirty ledger to Neon
-                        # synchronously. Only when a paid tool populated the cache, so free
-                        # tools don't pay to initialize it.
+                        # once-a-minute usage fold never runs. Money is already written
+                        # through by the wheel's single write path (tollbooth-dpyc 0.93.0);
+                        # what can still be pending is free-call usage counters, so fold
+                        # them before the instance goes. Only when a tool populated the
+                        # cache, so free tools that never touched it don't pay for one.
                         cache = getattr(host.runtime, "_ledger_cache", None)
                         if cache is not None:
                             try:
-                                await cache.flush_all()
+                                await cache.fold_usage()
                             except Exception:
                                 pass
 

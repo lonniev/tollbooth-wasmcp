@@ -7,6 +7,17 @@ tollbooth-wasmcp is the Spin/WASI host adapter for tollbooth-dpyc operators — 
 peer of FastMCP on the Prefect Horizon side. `SpinOperatorHost` runs the same
 operator source in a WebAssembly component.
 
+## [0.1.7] — 2026-09-28
+
+### Fixed — per-request persistence follows the wheel's single write path
+
+tollbooth-dpyc 0.93.0 removed the ledger's write-behind flush: money is written
+through by `mutate()`, and free-call usage counters are deltas folded by
+`fold_usage()`. The host still called `cache.flush_all()` at the end of each
+request; under 0.93.0 that raises, the host swallows it, and every free-call
+counter is lost when Spin tears the instance down. It now calls
+`fold_usage()` — the counters land, and nothing else was ever pending.
+
 ## [0.1.6] — 2026-08-10
 
 ### Changed — CI runs the check the deploy runs
