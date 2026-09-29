@@ -19,10 +19,11 @@ def install_proof_diagnostic():
 
     orig = _rt_mod.require_proof
 
-    async def _require_proof_maybe_diag(npub, dpop_token, tool_name, *, proven_cache=None,
-                                        window_seconds=_idp.DEFAULT_WINDOW_SECONDS):
-        err = await orig(npub, dpop_token, tool_name, proven_cache=proven_cache,
-                         window_seconds=window_seconds)
+    # Keyword-agnostic passthrough: the gate's keyword-only options are the
+    # wheel's to define (0.97.0 replaced ``proven_cache`` with ``revocations``
+    # and ``operator_hex``); this wrapper only reads the verdict.
+    async def _require_proof_maybe_diag(npub, dpop_token, tool_name, **options):
+        err = await orig(npub, dpop_token, tool_name, **options)
         if isinstance(err, dict) and err.get("error_code") == "proof_invalid" and os.environ.get("PROOF_DEBUG"):
             err["_diagnostic"] = _explain(_idp, npub, dpop_token, tool_name)
         return err
