@@ -1,0 +1,1 @@
+- `diagnostics.py`'s opt-in proof-rejection wrapper passed the gate's keyword-only options by name (`proven_cache`, `window_seconds`), so it broke against tollbooth-dpyc 0.97.0, which replaced `proven_cache` with `revocations` and `operator_hex` (the Secure Courier proof grant). It now forwards whatever options the wheel's gate takes and only reads the verdict.
