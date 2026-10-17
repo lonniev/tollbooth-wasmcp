@@ -11,8 +11,9 @@ Only what the wheel uses is implemented: `Client(url, auth=…)` as an async
 context manager with `call_tool(name, arguments)` returning a result whose
 `.content` is a list of text blocks (and `.data` the structured content, if any) —
 the exact surface `OracleClient._parse_result` / `AuthorityCertifier._parse_result`
-duck-type. `auth` is accepted and ignored (targets that need OAuth are out of
-scope; the Oracle is free/unauthenticated and the Authority gates on the proof arg).
+duck-type. `auth` follows fastmcp: a string other than "oauth" is sent as a bearer
+token, which is how the wheel's service clients reach a member with holder
+bearer on (`auth="anonymous"`); "oauth" is out of scope here and sends nothing.
 """
 
 import json
@@ -38,6 +39,7 @@ class _Result:
 class Client:
     def __init__(self, url, auth=None, **_kw):
         self._url = str(url)
+        self._bearer = auth if isinstance(auth, str) and auth != "oauth" else None
         self._session_id = None
         self._http = None
 
@@ -55,6 +57,8 @@ class Client:
             "Content-Type": "application/json",
             "Accept": "application/json, text/event-stream",
         }
+        if self._bearer:
+            headers["Authorization"] = f"Bearer {self._bearer}"
         if self._session_id:
             headers["Mcp-Session-Id"] = self._session_id
         r = await self._http.post(self._url, json=payload, headers=headers)
