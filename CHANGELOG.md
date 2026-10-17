@@ -9,6 +9,14 @@ operator source in a WebAssembly component.
 
 Changes not yet released live in `changelog.d/`, one file per change — see the README there for why, and `scripts/changelog.py` for what folds them in at release time.
 
+## [0.1.8] — 2026-10-17
+
+### Fixed
+
+- `diagnostics.py`'s opt-in proof-rejection wrapper passed the gate's keyword-only options by name (`proven_cache`, `window_seconds`), so it broke against tollbooth-dpyc 0.97.0, which replaced `proven_cache` with `revocations` and `operator_hex` (the Secure Courier proof grant). It now forwards whatever options the wheel's gate takes and only reads the verdict.
+
+- The Wasm `fastmcp.Client` shim sends `auth` as a bearer token, as fastmcp does (`"oauth"` still sends nothing). tollbooth-dpyc 0.101.1's service clients ask for `auth="anonymous"`, which a member with holder bearer on requires.
+
 ## [0.1.7] — 2026-09-28
 
 ### Fixed — per-request persistence follows the wheel's single write path
