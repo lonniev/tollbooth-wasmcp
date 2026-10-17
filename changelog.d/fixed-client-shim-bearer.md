@@ -1,1 +1,0 @@
-- The Wasm `fastmcp.Client` shim sends `auth` as a bearer token, as fastmcp does (`"oauth"` still sends nothing). tollbooth-dpyc 0.101.1's service clients ask for `auth="anonymous"`, which a member with holder bearer on requires.
